@@ -1,0 +1,62 @@
+package taskmanager.model;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class Project {
+    private static long idCounter = 1;
+
+    private final long projectId;
+    private String name;
+    private String description;
+    private final List<Task> tasks = new ArrayList<>();
+    private final List<Collaborator> collaborators = new ArrayList<>();
+
+    /** Constructor for new projects. */
+    public Project(String name, String description) {
+        this.projectId   = idCounter++;
+        this.name        = name;
+        this.description = description;
+    }
+
+    /** Constructor for loading an existing project from the database. */
+    public Project(long projectId, String name, String description) {
+        this.projectId   = projectId;
+        this.name        = name;
+        this.description = description;
+        if (projectId >= idCounter) idCounter = projectId + 1;
+    }
+
+    public static void syncIdCounter(long maxStoredId) {
+        if (maxStoredId >= idCounter) idCounter = maxStoredId + 1;
+    }
+
+    public long   getProjectId()   { return projectId; }
+    public String getName()        { return name; }
+    public String getDescription() { return description; }
+    public void   setName(String n)        { this.name = n; }
+    public void   setDescription(String d) { this.description = d; }
+
+    public List<Task> getTasks() {
+        return Collections.unmodifiableList(tasks);
+    }
+    public List<Collaborator> getCollaborators() {
+        return Collections.unmodifiableList(collaborators);
+    }
+    public void addTask(Task task) {
+        if (!tasks.contains(task)) tasks.add(task);
+    }
+    public void removeTask(Task task) { tasks.remove(task); }
+    public void addCollaborator(Collaborator c) {
+        if (!collaborators.contains(c)) collaborators.add(c);
+    }
+    public void removeCollaborator(Collaborator c) { collaborators.remove(c); }
+
+    @Override
+    public String toString() {
+        return "Project{id=" + projectId + ", name='" + name + "'"
+             + (description != null && !description.isEmpty() ? ", desc='" + description + "'" : "")
+             + "}";
+    }
+}
